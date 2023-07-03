@@ -1,0 +1,95 @@
+.signup-screen
+{
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../assets/WelcomeScreen.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.main-logo
+{
+  position: absolute;
+  top: 2vh;
+  left: 2vw;
+}
+.signup-screen-cont
+{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.main-cont-signup
+{
+  background-color: rgba(0,0,0,0.8);
+  padding: 2vw;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+  flex-direction: row;
+  border-radius: 10px;
+}
+.signup-title
+{
+  margin: 2.5vh 0;
+}
+.subscription-card-cont
+{
+}
+.subscription-card-indi
+{
+  background-color: rgba(97, 0, 194,0.5);
+  padding: 2vh 1vw;
+  border-radius: 10px;
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+  cursor: pointer;
+}
+.subscription-card-indi-header-cont
+{
+  background-color: black;
+}
+
+.subscription-card-indi-header-cont
+{
+  padding: 1vh 0.5vw;
+  border-radius: 10px;
+  min-width: 10vw;
+  min-height: 10vh;
+}
+
+.subscription-card-indi-desc-cont
+{
+  margin: 2vh 0vw;
+  padding-bottom: 1vh;
+  border-bottom: 1px solid white;
+}
+
+@media screen and (max-width: 900px) {
+  .main-cont-signup
+  {
+    flex-direction: column !important;
+  }
+  .subscription-card-cont
+  {
+    flex-direction: column !important;
+  }
+  .subscription-card-indi
+  {
+    margin: 1vh 0vw;
+  }
+  .subscription-card-indi-header-cont
+  {
+    background: none;
+    min-width: 30vw;
+    min-height: 5vh;
+  }
+  .subscription-card-indi-desc-cont
+  {
+    display: none;
+  }
+}
