@@ -24,7 +24,7 @@ const VideoPlayer = ({style={},onBackPressedFunc=() => {},contentData={}}) => {
     const hls = new Hls();
     console.log("contentData IS -> ",contentData)
     // const videoSrc = `https://hls-test.moneyyapp.in/videos-output/${data.fileEndpoint}/360.m3u8`;             
-    const videoSrc = `https://hls-test.moneyyapp.in/videos-output/${contentData?.contentFileEndpoint}/360.m3u8`;             
+    const videoSrc = "fileUrl" in contentData ? contentData.fileUrl : `https://online-streaming-service-backend.moneyyapp.in/videos-output/${contentData?.contentFileEndpoint}/360.m3u8`;             
     hls.loadSource(videoSrc);
     hls.attachMedia(video);
     hls.on(Hls.Events.MANIFEST_PARSED, function() { 
@@ -50,7 +50,7 @@ const VideoPlayer = ({style={},onBackPressedFunc=() => {},contentData={}}) => {
       }}>
         <img src={BackIcn}/>
       </div>
-      <video id="video" ref={playerRef} controls style={{width:"100%",height:"100%"}}
+      <video id="video" ref={playerRef} controls className="video-player"
         // onLoadedMetadata={() => {
         //   const video = playerRef.current;
         //   if (!video) return;

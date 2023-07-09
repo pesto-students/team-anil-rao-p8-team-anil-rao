@@ -1,4 +1,5 @@
-let url = "http://localhost:8001/";
+// let url = "http://localhost:8001/";
+let url = "https://online-streaming-service-backend.moneyyapp.in/"
 export const getUserDataApi = (email="",password="") => {
   return new Promise ((resolve,reject) => {var formdata = new FormData();
     formdata.append("password", password);
@@ -178,6 +179,7 @@ export const createNewContentApi = (contentTitle="",contentDescription="",conten
     formdata.append("contentDuration", contentDuration);
     formdata.append("contentFileEndpoint", contentFileEndpoint);
     formdata.append("contentRating", contentRating);
+    formdata.append("active", false);
     
     var requestOptions = {
       method: 'POST',
@@ -186,6 +188,101 @@ export const createNewContentApi = (contentTitle="",contentDescription="",conten
     };
     
     fetch(`${url}v1/content/create?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUGhvbmVOdW1iZXIiOiI4NjE5ODgzNjYzIiwiaWF0IjoxNjQ3MjYwMDY0fQ.fOYX04YwCJCbH1Zs3V5OMV6BaXAzyYhK7uVDANUf_Ds`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      // console.log(result)
+      resolve(result.data)
+    })
+    .catch(error => {
+      // console.log('error', error)
+      reject("error");
+    });
+  })
+}
+export const getFileEntryDataApi = () => {
+  return new Promise ((resolve,reject) => {
+    var formdata = new FormData();
+    formdata.append("page", "1");
+    formdata.append("limit", "1000000");
+    
+    var requestOptions = {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow'
+    };
+    
+    fetch("https://online-streaming-service-backend.moneyyapp.in/v1/fileEntry/readAll", requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      // console.log(result)
+      resolve(result.data)
+    })
+    .catch(error => {
+      // console.log('error', error)
+      reject("error");
+    });
+  })
+}
+export const inactiveContentApi = (contentId="") => {
+  return new Promise ((resolve,reject) => {var formdata = new FormData();
+    formdata.append("active", "false");
+    formdata.append("_id", contentId);
+    console.log("INACTIVATE CONTENT API CALLED WITH -> ",contentId);
+
+    var requestOptions = {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow'
+    };
+    
+    fetch(`${url}v1/content/update?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUGhvbmVOdW1iZXIiOiI4NjE5ODgzNjYzIiwiaWF0IjoxNjQ3MjYwMDY0fQ.fOYX04YwCJCbH1Zs3V5OMV6BaXAzyYhK7uVDANUf_Ds`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      console.log(result)
+      resolve(result.data)
+    })
+    .catch(error => {
+      console.log('error', error)
+      reject("error");
+    });
+  })
+}
+export const activateContentApi = (contentId="") => {
+  return new Promise ((resolve,reject) => {var formdata = new FormData();
+    formdata.append("active", "true");
+    formdata.append("_id", contentId);
+    
+    var requestOptions = {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow'
+    };
+    
+    fetch(`${url}v1/content/update?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUGhvbmVOdW1iZXIiOiI4NjE5ODgzNjYzIiwiaWF0IjoxNjQ3MjYwMDY0fQ.fOYX04YwCJCbH1Zs3V5OMV6BaXAzyYhK7uVDANUf_Ds`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      // console.log(result)
+      resolve(result.data)
+    })
+    .catch(error => {
+      // console.log('error', error)
+      reject("error");
+    });
+  })
+}
+export const getSearchDataApi = (searchString="",page=1,limit=1000) => {
+  return new Promise ((resolve,reject) => {var formdata = new FormData();
+    formdata.append("page", page);
+    formdata.append("limit", limit);
+    formdata.append("searchString", searchString);
+    
+    var requestOptions = {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow'
+    };
+    
+    fetch(`${url}v1/content/readAll?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUGhvbmVOdW1iZXIiOiI4NjE5ODgzNjYzIiwiaWF0IjoxNjQ3MjYwMDY0fQ.fOYX04YwCJCbH1Zs3V5OMV6BaXAzyYhK7uVDANUf_Ds`, requestOptions)
     .then(response => response.json())
     .then(result => {
       // console.log(result)

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import "../Css/utils.css";
 
@@ -15,7 +15,20 @@ const SignUpScreen = (props) => {
   const [password,setPassword] = useState("");
 
   const [selectedPlanIndex,setSelectPlanIndex] = useState(0)
-  const [selectedPlan,setSelectPlan] = useState("basic")
+  const [selectedPlan,setSelectPlan] = useState("basic");
+  useEffect(() => {
+    (async () => {
+      let temp = localStorage.getItem("userData");
+      if(temp != null)
+      {
+        temp = await JSON.parse(temp);
+        if(temp.isAdmin)
+        window.location.replace("/AdminHomeScreen");
+        else
+        window.location.replace("/homeScreen");
+      }
+    })()
+  },[])
   return(
     <div className="signup-screen">
       <div className="signup-screen-cont wid-95-cnt">

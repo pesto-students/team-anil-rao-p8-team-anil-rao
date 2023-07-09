@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import "../Css/utils.css";
 
@@ -7,6 +7,20 @@ import MainLogo from "../assets/MainLogo.png";
 import { PurpleButton } from "../Components/Button";
 
 const LandingScreen = (props) => {
+
+  useEffect(() => {
+    (async () => {
+      let temp = localStorage.getItem("userData");
+      if(temp != null)
+      {
+        temp = await JSON.parse(temp);
+        if(temp.isAdmin)
+        window.location.replace("/AdminHomeScreen");
+        else
+        window.location.replace("/homeScreen");
+      }
+    })()
+  },[])
   return(
     <div className="landing-screen">
       <div>

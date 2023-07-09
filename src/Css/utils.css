@@ -60,7 +60,7 @@ body{
 }
 
 @media screen and (max-width: 900px) {
-  .fnt-sz-0{font-size: 12vw;}
+  .fnt-sz-0{font-size: 10vw;}
   .fnt-sz-1{font-size: 5.0vw;}
   .fnt-sz-2{font-size: 4vw;}
   .fnt-sz-3{font-size: 3.5vw;}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import "../Css/utils.css";
 
@@ -11,6 +11,19 @@ import { getUserDataApi } from "../utils/baseApis";
 const LoginScreen = (props) => {
   const [email,setEmail] = useState("test@gmail.com");
   const [password,setPassword] = useState("test@123");
+  useEffect(() => {
+    (async () => {
+      let temp = localStorage.getItem("userData");
+      if(temp != null)
+      {
+        temp = await JSON.parse(temp);
+        if(temp.isAdmin)
+        window.location.replace("/AdminHomeScreen");
+        else
+        window.location.replace("/homeScreen");
+      }
+    })()
+  },[])
   return(
     <div className="login-screen">
       <div className="login-screen-cont wid-95-cnt">

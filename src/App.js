@@ -9,8 +9,11 @@ import LoginScreen from './Pages/LoginScreen';
 import LandingScreen from './Pages/LandingScreen';
 import VideoPlayer from './Pages/VideoPlayer';
 import AdminHomeScreen from './Pages/AdminHomeScreen';
+import { useEffect } from 'react';
 
 function App() {
+  useEffect(() => {
+  },[])
   return (
     <Provider store={store}>
       <BrowserRouter>

@@ -6,9 +6,14 @@
 }
 .navbar
 {
+  display: flex;
   width: 15%;
   box-shadow: 0px 0px 100px #6100C2;
   z-index: +10;
+}
+.nav-icn-close
+{
+  display: none;
 }
 .navbar-cont
 {
@@ -106,6 +111,12 @@
   width: 100%;
   overflow: hidden;
   overflow-x: scroll;
+}
+.card-disp-grid
+{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-row-gap: 1vh;
 }
 .indi-content-card
 {
@@ -212,11 +223,71 @@
   align-items: center;
   flex-direction: column;
 }
-
+.indi-uploaded-file
+{
+  border: 1px solid #6100C2;
+  padding: 2vw;
+  border-radius: 10px;
+}
+.file-entry-cont
+{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-row-gap: 1vh;
+  grid-column-gap: 2.5vw;
+}
+.active-inactive-butt
+{
+  display: flex;
+  position: absolute;
+  top: 0.5vw;
+  right: 0.5vw;
+  padding: 0.5vh 0.5vw;
+  border-radius: 50px;
+  z-index: +100;
+  cursor: pointer;
+}
+.active-inactive-butt-cont-modal
+{
+  display: flex;
+  padding: 0.5vh 0.5vw;
+  border-radius: 50px;
+  z-index: +100;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+.main-cont-nav-lft-sec
+{
+  display: none;
+}
 @media screen and (max-width: 900px) {
-  .navbar{
-    display: none;
+  .nav-inc-sz
+  {
+    width: 4vw;
+    height: 4vw;
+    margin-right: 2vw;
   }
+  .navbar{
+    display: flex;
+    position: fixed;
+    background-color: rgba(0,0,0,0.8);
+    width: 40%;
+  }
+  .nav-icn-close
+  {
+    display: block;
+    position: absolute;
+    top: 2vh;
+    left: 4vw;
+  }
+
+  .nav-icn-close > img
+  {
+    width: 4vw;
+    height: 4vw;
+  } 
+
   .main-cont
   {
     width: 100%;
@@ -237,16 +308,16 @@
   }
   .content-details-modal-img-cont > img
   {
-    width: 95%;
+    width: 90%;
     margin: 0;
-    margin-left: 2.5%;
+    margin-left: 5%;
     height:25vh;
   }
   .content-details-modal-deatils-cont
   {
-    width: 95%;
+    width: 90%;
     margin-right: 0;
-    margin-left: 2.5%;
+    margin-left: 5%;
     margin-bottom: 2.5vh;
   }
   .content-details-modal-close-butt
@@ -259,5 +330,19 @@
   {
     width: 5vw;
     height: 5vw;
+  }
+  .main-cont-nav-lft-sec
+  {
+    display: flex;
+    margin-left: 5vw;
+  }
+  .content-display-sec-indi
+  {
+    margin: 5vh 0vw;
+  }
+  .card-disp-grid
+  {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 }

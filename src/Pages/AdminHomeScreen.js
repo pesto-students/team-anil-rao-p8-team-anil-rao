@@ -21,11 +21,19 @@ import CardImg from "../assets/cardimage.png";
 import SearchIcn from "../assets/search.png";
 import UserIcn from "../assets/userIcn.png";
 import { FavButton, PurpleButton } from "../Components/Button";
-import { addToFavouriteApi, createNewContentApi, getContentDataApi, getTrendingContentDataApi, getUserFavouritesDataApi, removeUserFavouritesDataApi } from "../utils/baseApis";
+import { activateContentApi, addToFavouriteApi, createNewContentApi, getContentDataApi, getFileEntryDataApi, getSearchDataApi, getTrendingContentDataApi, getUserFavouritesDataApi, inactiveContentApi, removeUserFavouritesDataApi } from "../utils/baseApis";
 import VideoPlayer from "./VideoPlayer";
 import ProgressBar from "@ramonak/react-progress-bar";
 import { SimpleTextInput } from "../Components/TextInput";
 import { datefunction } from "../utils/fucntions";
+
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height
+  };
+}
 
 const AdminHomeScreen = (props) => {
   const [userData,setUserData] = useState(null);
@@ -40,6 +48,11 @@ const AdminHomeScreen = (props) => {
       icn:NavIcn1,
       icnAlt:NavIcnAlt1,
       navTxt:"Home"
+    },
+    {
+      icn:NavIcn1,
+      icnAlt:NavIcnAlt1,
+      navTxt:"File Entries"
     },
   ])
   const [contentFetched,setContentFetched] = useState(false);
@@ -56,7 +69,8 @@ const AdminHomeScreen = (props) => {
   const [uploadPercentage,setUploadPercentage] = useState(0);
   const [uploadFileEndPoint,setUploadFileEndPoint] = useState("");
   const [uploadData,setUploadData] = useState(null)
-  let url = "http://localhost:8001/";
+  // let url = "http://localhost:8001/";
+  let url = "https://online-streaming-service-backend.moneyyapp.in/";
 
 
   const [contentName,setContentName] = useState("");
@@ -66,6 +80,15 @@ const AdminHomeScreen = (props) => {
   const [contentDuration,setContentDuration] = useState("");
   const [contentRating,setContentRating] = useState("");
   const [contentImg,setContentImg] = useState("");
+
+  const [fileEntryData,setFileEntryData] = useState([]);
+
+  const [search,setSearch] = useState("");
+  const [showSearch,setShowSearch] = useState(false);
+  const [searchData,setSearchData] = useState([]);
+
+  const [showNavbar,setShowNavbar] = useState(false);
+  const [screenWidth,setScreenWidth] = useState(getWindowDimensions().width)
 
   useEffect(() => {
     if(userData == null)
@@ -79,6 +102,10 @@ const AdminHomeScreen = (props) => {
         else
         {
           temp = await JSON.parse(temp);
+          if(!temp?.isAdmin)
+          {
+            window.location.replace("/homeScreen");
+          }
           setUserData(temp);
         }
       })()
@@ -87,10 +114,16 @@ const AdminHomeScreen = (props) => {
   useEffect(() => {
     if(!contentFetched && userData != null)
     {
-      fetchAllContent(1,10,true);
-      fetchUserFavouritesData(1,10,true)
+      fetchAllContent(1,10000,true);
+      fetchFileEntryData(1,1000000,true)
     }
   },[userData])
+  useEffect(() => {
+    if(search?.length > 0)
+    {
+      fetchSearchData(1,1000,true);
+    }
+  },[search])
   async function fetchAllContent(page=1,limit=10,refresh=false)
   {
     let temp = await getContentDataApi(page,limit);
@@ -103,16 +136,16 @@ const AdminHomeScreen = (props) => {
       setAllContentData([...allContentData,...temp]);
     }
   }
-  async function fetchTrendingContent(page=1,limit=10,refresh=false)
+  async function fetchFileEntryData(page=1,limit=10,refresh=false)
   {
-    let temp = await getTrendingContentDataApi(page,limit);
+    let temp = await getFileEntryDataApi(page,limit);
     if(refresh)
     {
-      setTrendingData(temp);
+      setFileEntryData(temp);
     }
     else
     {
-      setTrendingData([...allContentData,...temp]);
+      setFileEntryData([...fileEntryData,...temp]);
     }
   }
   async function fetchUserFavouritesData(page=1,limit=10,refresh=false)
@@ -128,11 +161,27 @@ const AdminHomeScreen = (props) => {
       setUserFavouritesData([...allContentData,...temp]);
     }
   }
+  async function fetchSearchData(page=1,limit=10,refresh=false)
+  {
+    let temp = await getSearchDataApi(search,page,limit);
+    console.log("fetchSearchData FUNCTION CALLED -> ",temp)
+    if(refresh)
+    {
+      setSearchData(temp);
+    }
+    else
+    {
+      setSearchData([...searchData,...temp]);
+    }
+  }
   return(
     <div className="homescreen-cont dsp-flx-rw">
 
       {/* NAVBAR */}
-      <div className="navbar">
+      <div className="navbar" style={{display: (showNavbar || screenWidth >= 900) ? "flex" : "none"}}>
+        <div className="nav-icn-close" onClick={() => {setShowNavbar(false)}}>
+          <img src={require("../assets/close.png")}/>
+        </div>
         <div className="navbar-cont wid-80-cnt">
           <div className="dsp-flx-rw main-logo-nav">
             <img src={MainLogo} className="main-inc-sz"/>
@@ -165,12 +214,25 @@ const AdminHomeScreen = (props) => {
       {/* HOME SCREEN */}
       <div className="main-cont">
 
-        <div className="main-cont-nav">
+        <div className="main-cont-nav dsp-flx-rw">
+          <div className="main-cont-nav-lft-sec dsp-flx-rw">
+            <div className="dsp-flx-rw algn-itm-cnt" onClick={() => {setShowNavbar(true)}}>
+              <p className="clr-white mrg-0 fnt-wt-700 fnt-sz-2-3">{selectedNavOptions}</p>
+            </div>
+          </div>
 
           <div className="main-cont-nav-rght-sec dsp-flx-rw">
 
             <div className="search-bar dsp-flx-rw algn-itm-cnt">
-              <img src={SearchIcn} className="main-inc-sz"/>
+              <SimpleTextInput 
+                placeholderTxt="Search Here"
+                value={search}
+                setValue={setSearch}
+                inputStyle={{padding: "0.5vh 2vw",margin:0 ,fontSize:"3vw",marginRight:"1vw",display:showSearch ? "flex" : "none"}}
+              />
+              <img src={SearchIcn} className="main-inc-sz" onClick={() => {
+                setShowSearch(!showSearch)
+              }}/>
             </div>
 
             <div className="dsp-flx-rw algn-itm-cnt">
@@ -420,10 +482,10 @@ const AdminHomeScreen = (props) => {
         </div>
 
         {/* ALL DATA */}
-        {selectedNavOptions == "Home" && 
+        {(selectedNavOptions === "Home" && search?.length == 0) && 
         <div className="content-display-sec-indi wid-95-cnt">
           <p className="mrg-0 fnt-sz-2 fnt-wt-200 clr-white content-display-sec-indi-title">ALL</p>
-          <div className="indi-content-card-cont dsp-flx-rw"> 
+          <div className={`indi-content-card-cont dsp-flx-rw ${selectedNavOptions != "Upload" && "card-disp-grid"}`}> 
             {
               allContentData.map((indiContent,index) => {
                 return(
@@ -432,6 +494,26 @@ const AdminHomeScreen = (props) => {
                     setShowContentDetailsModal(true)
                   }}>
                     <img src={indiContent.contentImg} className="indi-content-img"/>
+                    <div className="active-inactive-butt" style={{backgroundColor : indiContent?.active ? "#02A95C" : "#FF0000"}}
+                      onClick={async () => {
+                        if(indiContent?.active)
+                        {
+                          await inactiveContentApi(indiContent._id)
+                          let temp = [...allContentData];
+                          temp[index].active = false;
+                          setAllContentData(temp); 
+                        }
+                        else
+                        {
+                          await activateContentApi(indiContent._id)
+                          let temp = [...allContentData];
+                          temp[index].active = true;
+                          setAllContentData(temp);
+                        }
+                      }}
+                    >
+                      <p className="clr-white mrg-0">{indiContent?.active ? "Active" : "In Active"}</p>
+                    </div>
                     <div className="indi-content-card-details-cont bck-clr-purple-light">
                       <p className="mrg-0 fnt-sz-3 fnt-wt-700 clr-white indi-content-card-details-cont-title">{indiContent.contentTitle.substring(0,20)}</p>
                       <p className="mrg-0 fnt-sz-3 clr-gry-light indi-content-card-details-cont-details">{indiContent.contentReleaseYear} | {indiContent.contentTags[0]}</p>
@@ -442,6 +524,83 @@ const AdminHomeScreen = (props) => {
             }
           </div>
         </div>
+        }
+        {/* ALL DATA */}
+        {(selectedNavOptions == "File Entries" && search?.length == 0) && 
+        <div className="content-display-sec-indi wid-95-cnt">
+          <p className="mrg-0 fnt-sz-2 fnt-wt-200 clr-white content-display-sec-indi-title">File Entries</p>
+          <div className="file-entry-cont"> 
+            {fileEntryData.map((data,indx) => {
+              return(
+                <div key={indx} className='indi-uploaded-file'>
+                  <p className='clr-white'>File Name :- <b>{data.fileName}</b></p>
+                  <p className='clr-white'>File Endpoint :- <b>{data.fileEndpoint}</b></p>
+                  <p className='clr-white'>Upload Status :- <b>{data.fileStatus}</b></p>
+                  <p className='clr-white'>Generated Through Chunks :- <b>{`${data.fileGeneratedThroughChunks}`}</b></p>
+                  <p className='clr-white'>Is Transcoded :- <b>{`${data.convertedToHls}`}</b></p>
+                  <p className='clr-white'>Is Transcoding :- <b>{`${data.processingToHls}`}</b></p>
+                  {data?.convertedToHls &&
+                  <div>
+                    <button
+                        onClick={() =>{
+                          setSelectedVideoData({
+                            fileUrl:`${url}videos-output/${data.fileEndpoint}/360.m3u8`            
+                          });
+                          setShowVideoPlayer(true);
+                          
+                        }}
+                      >Play in 360p
+                    </button>
+                    <button
+                        onClick={() =>{
+                          setSelectedVideoData({
+                            fileUrl:`${url}videos-output/${data.fileEndpoint}/720.m3u8`
+                          });
+                          setShowVideoPlayer(true);
+                        }}
+                      >Play in 720p
+                    </button>
+                    <button
+                        onClick={() =>{
+                          setSelectedVideoData({
+                            fileUrl:`${url}videos-output/${data.fileEndpoint}/1080.m3u8`
+                          });
+                          setShowVideoPlayer(true);
+                        }}
+                      >Play in 1080p
+                    </button>
+                  </div>
+                  }
+                </div>
+              )
+            })}
+          </div>
+        </div>
+        }
+        {/* SEARCH DATA */}
+        {(search?.length > 0)&& 
+         <div className="content-display-sec-indi wid-95-cnt">
+           <p className="mrg-0 fnt-sz-2 fnt-wt-200 clr-white content-display-sec-indi-title">Search Results</p>
+           <div className={`indi-content-card-cont dsp-flx-rw ${selectedNavOptions != "Upload" && "card-disp-grid"}`}> 
+             {
+               searchData.map((indiContent,index) => {
+                 if(indiContent?.active)
+                 return(
+                   <div className="indi-content-card" key={index} onClick={() => {
+                     setContentModalDetails(indiContent);
+                     setShowContentDetailsModal(true)
+                   }}>
+                     <img src={indiContent.contentImg} className="indi-content-img"/>
+                     <div className="indi-content-card-details-cont bck-clr-purple-light">
+                       <p className="mrg-0 fnt-sz-3 fnt-wt-700 clr-white indi-content-card-details-cont-title">{indiContent.contentTitle.substring(0,20)}</p>
+                       <p className="mrg-0 fnt-sz-3 clr-gry-light indi-content-card-details-cont-details">{indiContent.contentReleaseYear} | {indiContent.contentTags[0]}</p>
+                     </div>
+                   </div>
+                 )
+               })
+             }
+           </div>
+         </div>
         }
       </div>
 
@@ -471,26 +630,10 @@ const AdminHomeScreen = (props) => {
                   setShowVideoPlayer(true);
                 }}
               />
-              <FavButton 
-                isFav={userFavouritesData.findIndex((data) => data.contentData._id === contentModalDetials?._id) != -1}
-                onClickFunc={async () => {
-                  if(userFavouritesData.findIndex((data) => data.contentData._id === contentModalDetials?._id) != -1)
-                  {
-                    await removeUserFavouritesDataApi(userData?.userId,contentModalDetials?._id)
-                    await fetchUserFavouritesData(1,10,true);
-                  }
-                  else
-                  {
-                    await addToFavouriteApi(userData?.userId,contentModalDetials?._id)
-                    await fetchUserFavouritesData(1,10,true);
-                  }
-                }}
-              />
             </div>
           </div>
         </div>
       }
-
       {showVideoPlayer && 
         <VideoPlayer
           onBackPressedFunc={() => {

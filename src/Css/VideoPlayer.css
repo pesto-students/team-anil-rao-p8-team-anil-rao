@@ -56,3 +56,24 @@
 {
   margin-left: auto;
 }
+.video-player
+{
+  width: 100vw;
+  height: 100vh;
+}
+@media screen and (max-width: 900px) {
+  .back-butt
+  {
+    top: 2.5vh;
+    left: 2.5vw;
+    padding: 2vw;
+    z-index: +50;
+    justify-content: center;
+    align-items: center;
+  }
+  .back-butt > img 
+  {
+    width: 4vw;
+    height: 4vw;
+  }
+}

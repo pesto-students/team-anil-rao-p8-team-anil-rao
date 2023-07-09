@@ -21,8 +21,17 @@ import CardImg from "../assets/cardimage.png";
 import SearchIcn from "../assets/search.png";
 import UserIcn from "../assets/userIcn.png";
 import { FavButton, PurpleButton } from "../Components/Button";
-import { addToFavouriteApi, getContentDataApi, getTrendingContentDataApi, getUserFavouritesDataApi, removeUserFavouritesDataApi } from "../utils/baseApis";
+import { addToFavouriteApi, getContentDataApi, getSearchDataApi, getTrendingContentDataApi, getUserFavouritesDataApi, removeUserFavouritesDataApi } from "../utils/baseApis";
 import VideoPlayer from "./VideoPlayer";
+import { SimpleTextInput } from "../Components/TextInput";
+
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height
+  };
+}
 
 const HomeScreen = (props) => {
   const [userData,setUserData] = useState(null);
@@ -217,9 +226,16 @@ const HomeScreen = (props) => {
   const [userFavouritesData,setUserFavouritesData] = useState([]);
   const [showContentDetailsModal,setShowContentDetailsModal] = useState(false);
   const [contentModalDetials,setContentModalDetails] = useState({});
-
+  
   const [showVideoPlayer,setShowVideoPlayer] = useState(false);
   const [selectedVideoData,setSelectedVideoData] = useState(null);
+
+  const [search,setSearch] = useState("");
+  const [showSearch,setShowSearch] = useState(false);
+  const [searchData,setSearchData] = useState([]);
+
+  const [showNavbar,setShowNavbar] = useState(false);
+  const [screenWidth,setScreenWidth] = useState(getWindowDimensions().width)
 
   useEffect(() => {
     if(userData == null)
@@ -237,6 +253,7 @@ const HomeScreen = (props) => {
         }
       })()
     }
+    console.log("WIDTH OF SCREEN -> ",getWindowDimensions());
   },[])
   useEffect(() => {
     if(!contentFetched && userData != null)
@@ -246,6 +263,12 @@ const HomeScreen = (props) => {
       fetchTrendingContent(1,1000,true);
     }
   },[userData])
+  useEffect(() => {
+    if(search?.length > 0)
+    {
+      fetchSearchData(1,1000,true);
+    }
+  },[search])
   async function fetchAllContent(page=1,limit=10,refresh=false)
   {
     let temp = await getContentDataApi(page,limit);
@@ -283,11 +306,27 @@ const HomeScreen = (props) => {
       setUserFavouritesData([...allContentData,...temp]);
     }
   }
+  async function fetchSearchData(page=1,limit=10,refresh=false)
+  {
+    let temp = await getSearchDataApi(search,page,limit);
+    console.log("fetchSearchData FUNCTION CALLED -> ",temp)
+    if(refresh)
+    {
+      setSearchData(temp);
+    }
+    else
+    {
+      setSearchData([...searchData,...temp]);
+    }
+  }
   return(
     <div className="homescreen-cont dsp-flx-rw">
 
       {/* NAVBAR */}
-      <div className="navbar">
+      <div className="navbar" style={{display: (showNavbar || screenWidth >= 900) ? "flex" : "none"}}>
+        <div className="nav-icn-close" onClick={() => {setShowNavbar(false)}}>
+          <img src={require("../assets/close.png")}/>
+        </div>
         <div className="navbar-cont wid-80-cnt">
           <div className="dsp-flx-rw main-logo-nav">
             <img src={MainLogo} className="main-inc-sz"/>
@@ -320,12 +359,24 @@ const HomeScreen = (props) => {
       {/* HOME SCREEN */}
       <div className="main-cont">
 
-        <div className="main-cont-nav">
+        <div className="main-cont-nav  dsp-flx-rw">
+          <div className="main-cont-nav-lft-sec dsp-flx-rw">
+            <div className="dsp-flx-rw algn-itm-cnt" onClick={() => {setShowNavbar(true)}}>
+              <p className="clr-white mrg-0 fnt-wt-700 fnt-sz-2-3">{selectedNavOptions}</p>
+            </div>
+          </div>
 
           <div className="main-cont-nav-rght-sec dsp-flx-rw">
-
             <div className="search-bar dsp-flx-rw algn-itm-cnt">
-              <img src={SearchIcn} className="main-inc-sz"/>
+              <SimpleTextInput 
+                placeholderTxt="Search Here"
+                value={search}
+                setValue={setSearch}
+                inputStyle={{padding: screenWidth >= 900 ? "1vh 1vw" : "0.5vh 2vw",margin:0 ,fontSize:screenWidth >= 900 ? "1.5vw" : "3vw",marginRight:"1vw",display:showSearch ? "flex" : "none"}}
+              />
+              <img src={SearchIcn} className="main-inc-sz" onClick={() => {
+                setShowSearch(!showSearch)
+              }}/>
             </div>
 
             <div className="dsp-flx-rw algn-itm-cnt">
@@ -336,32 +387,52 @@ const HomeScreen = (props) => {
 
         </div>
 
-        {selectedNavOptions === "Home" &&
+        {(selectedNavOptions === "Home" && search?.length == 0) &&
           <div className="main-top-banner">
-            <img src={TopBannerImg} className="main-top-banner-img"/>
+            <img src={trendingData[0]?.contentImg} className="main-top-banner-img"/>
 
             <div className="main-top-banner-items-cont">
-              <p className="clr-white mrg-0 fnt-sz-0 fnt-wt-bold head-txt-title">Insider</p>
-              <p className="clr-gry-light mrg-0 head-txt-desc">2022 | Comedy | 1 Season</p>
+              <p className="clr-white mrg-0 fnt-sz-0 fnt-wt-bold head-txt-title">{trendingData[0]?.contentTitle}</p>
+              <p className="clr-gry-light mrg-0 head-txt-desc">{trendingData[0]?.contentReleaseYear} | {trendingData[0]?.contentTags[0]}</p>
               <div className="dsp-flx-rw">
                 <PurpleButton 
                   buttTxt="WatchNow"
                   style={{marginRight:"2vw"}}
+                  onClickFunc={() => {
+                    setContentModalDetails(trendingData[0]);
+                    setShowContentDetailsModal(true)
+                  }}
                 />
-                <FavButton />
+                <FavButton 
+                  isFav={userFavouritesData.findIndex((data) => data.contentData._id === trendingData[0]?._id) != -1}
+                  onClickFunc={async () => {
+                    if(userFavouritesData.findIndex((data) => data.contentData._id === contentModalDetials?._id) != -1)
+                    {
+                      console.log("REMOVE FROM FAVOURITE CALLED!! ")
+                      await removeUserFavouritesDataApi(userData?._id,contentModalDetials?._id)
+                      await fetchUserFavouritesData(1,10,true);
+                    }
+                    else
+                    {
+                      console.log("ADD TO FAVOURITE CALLED!! ")
+                      await addToFavouriteApi(userData?._id,contentModalDetials?._id)
+                      await fetchUserFavouritesData(1,10,true);
+                    }
+                  }}
+                />
               </div>
             </div>
 
           </div>
         }
-
         {/* ALL DATA */}
-       {selectedNavOptions == "Home" && 
+       {(selectedNavOptions == "Home"  && search?.length == 0)&& 
         <div className="content-display-sec-indi wid-95-cnt">
           <p className="mrg-0 fnt-sz-2 fnt-wt-200 clr-white content-display-sec-indi-title">ALL</p>
-          <div className="indi-content-card-cont dsp-flx-rw"> 
+          <div className={`indi-content-card-cont dsp-flx-rw ${selectedNavOptions != "Home" && "card-disp-grid"}`}> 
             {
               allContentData.map((indiContent,index) => {
+                if(indiContent?.active)
                 return(
                   <div className="indi-content-card" key={index} onClick={() => {
                     setContentModalDetails(indiContent);
@@ -381,13 +452,14 @@ const HomeScreen = (props) => {
         }
 
         {/* USER FAVOURITES DATA */}
-        {(selectedNavOptions == "Home" || selectedNavOptions == "Favourites") && 
+        {((selectedNavOptions == "Home" || selectedNavOptions == "Favourites") && search?.length == 0) && 
           <div className="content-display-sec-indi wid-95-cnt">
             <p className="mrg-0 fnt-sz-2 fnt-wt-200 clr-white content-display-sec-indi-title">Favourites</p>
-            <div className="indi-content-card-cont dsp-flx-rw"> 
+            <div className={`indi-content-card-cont dsp-flx-rw ${selectedNavOptions != "Home" && "card-disp-grid"}`}> 
               {
                 userFavouritesData.map((indiContent,index) => {
                   console.log("indiContent FAVOURITE -> ",indiContent)
+                  if(indiContent?.contentData?.active)
                   return(
                     <div className="indi-content-card" key={index} onClick={() => {
                       setContentModalDetails(indiContent.contentData);
@@ -406,12 +478,13 @@ const HomeScreen = (props) => {
           </div>
         }
         {/* TRENDING DATA */}
-        {(selectedNavOptions == "Home" || selectedNavOptions == "Trending") && 
+        {((selectedNavOptions == "Home" || selectedNavOptions == "Trending") && search?.length == 0) && 
         <div className="content-display-sec-indi wid-95-cnt">
           <p className="mrg-0 fnt-sz-2 fnt-wt-200 clr-white content-display-sec-indi-title">Trending</p>
-          <div className="indi-content-card-cont dsp-flx-rw"> 
+          <div className={`indi-content-card-cont dsp-flx-rw ${selectedNavOptions != "Home" && "card-disp-grid"}`}> 
             {
               trendingData.map((indiContent,index) => {
+                if(indiContent?.active)
                 return(
                   <div className="indi-content-card" key={index} onClick={() => {
                     setContentModalDetails(indiContent);
@@ -428,6 +501,32 @@ const HomeScreen = (props) => {
             }
           </div>
         </div>
+        }
+        
+        {/* SEARCH DATA */}
+        {(search?.length > 0)&& 
+         <div className="content-display-sec-indi wid-95-cnt">
+           <p className="mrg-0 fnt-sz-2 fnt-wt-200 clr-white content-display-sec-indi-title">Search Results</p>
+           <div className={`indi-content-card-cont dsp-flx-rw ${selectedNavOptions != "Home" && "card-disp-grid"}`}> 
+             {
+               searchData.map((indiContent,index) => {
+                 if(indiContent?.active)
+                 return(
+                   <div className="indi-content-card" key={index} onClick={() => {
+                     setContentModalDetails(indiContent);
+                     setShowContentDetailsModal(true)
+                   }}>
+                     <img src={indiContent.contentImg} className="indi-content-img"/>
+                     <div className="indi-content-card-details-cont bck-clr-purple-light">
+                       <p className="mrg-0 fnt-sz-3 fnt-wt-700 clr-white indi-content-card-details-cont-title">{indiContent.contentTitle.substring(0,20)}</p>
+                       <p className="mrg-0 fnt-sz-3 clr-gry-light indi-content-card-details-cont-details">{indiContent.contentReleaseYear} | {indiContent.contentTags[0]}</p>
+                     </div>
+                   </div>
+                 )
+               })
+             }
+           </div>
+         </div>
         }
 
         {/* {
