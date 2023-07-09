@@ -612,6 +612,7 @@ const HomeScreen = (props) => {
             setShowVideoPlayer(false)
           }}
           contentData={selectedVideoData}
+          quality={userData?.planSelected}
         />
       }
 

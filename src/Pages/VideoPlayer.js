@@ -13,7 +13,7 @@ import VolumeIcn from "../assets/player-icons/volume.png";
 
 
 
-const VideoPlayer = ({style={},onBackPressedFunc=() => {},contentData={}}) => {
+const VideoPlayer = ({style={},onBackPressedFunc=() => {},contentData={},quality="basic"}) => {
   const playerRef = useRef()
   const [play,setPlay] = useState(false);
   const [duration,setDuration] = useState(0);
@@ -24,7 +24,8 @@ const VideoPlayer = ({style={},onBackPressedFunc=() => {},contentData={}}) => {
     const hls = new Hls();
     console.log("contentData IS -> ",contentData)
     // const videoSrc = `https://hls-test.moneyyapp.in/videos-output/${data.fileEndpoint}/360.m3u8`;             
-    const videoSrc = "fileUrl" in contentData ? contentData.fileUrl : `https://online-streaming-service-backend.moneyyapp.in/videos-output/${contentData?.contentFileEndpoint}/360.m3u8`;             
+    let mode = quality == "basic" ? "360" : (quality == "standard" ? "720" : "1080");
+    const videoSrc = "fileUrl" in contentData ? contentData.fileUrl : `https://online-streaming-service-backend.moneyyapp.in/videos-output/${contentData?.contentFileEndpoint}/${mode}.m3u8`;             
     hls.loadSource(videoSrc);
     hls.attachMedia(video);
     hls.on(Hls.Events.MANIFEST_PARSED, function() { 
