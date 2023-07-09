@@ -21,7 +21,7 @@ import CardImg from "../assets/cardimage.png";
 import SearchIcn from "../assets/search.png";
 import UserIcn from "../assets/userIcn.png";
 import { FavButton, PurpleButton } from "../Components/Button";
-import { addToFavouriteApi, getContentDataApi, getSearchDataApi, getTrendingContentDataApi, getUserFavouritesDataApi, removeUserFavouritesDataApi } from "../utils/baseApis";
+import { addToFavouriteApi, getContentDataApi, getSearchDataApi, getTrendingContentDataApi, getUserFavouritesDataApi, removeUserFavouritesDataApi, updateContentViewApi } from "../utils/baseApis";
 import VideoPlayer from "./VideoPlayer";
 import { SimpleTextInput } from "../Components/TextInput";
 
@@ -580,6 +580,7 @@ const HomeScreen = (props) => {
                 buttTxt="WatchNow"
                 style={{marginRight:"2vw"}}
                 onClickFunc={() => {
+                  updateContentViewApi(contentModalDetials?._id,contentModalDetials?.contentViews+1);
                   setSelectedVideoData(contentModalDetials);
                   setShowVideoPlayer(true);
                 }}

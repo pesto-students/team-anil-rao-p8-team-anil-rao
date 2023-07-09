@@ -294,6 +294,33 @@ export const getSearchDataApi = (searchString="",page=1,limit=1000) => {
     });
   })
 }
+export const updateContentViewApi = (contentId,contentView=null) => {
+  if(contentView == null || contentView == undefined)
+  {
+    return;
+  }
+  return new Promise ((resolve,reject) => {var formdata = new FormData();
+    formdata.append("_id", contentId);
+    formdata.append("contentViews", contentView);
+    
+    var requestOptions = {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow'
+    };
+    
+    fetch(`${url}v1/content/update?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUGhvbmVOdW1iZXIiOiI4NjE5ODgzNjYzIiwiaWF0IjoxNjQ3MjYwMDY0fQ.fOYX04YwCJCbH1Zs3V5OMV6BaXAzyYhK7uVDANUf_Ds`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      // console.log(result)
+      resolve(result.data)
+    })
+    .catch(error => {
+      // console.log('error', error)
+      reject("error");
+    });
+  })
+}
 export const baseTemplate = () => {
   return new Promise ((resolve,reject) => {
     fetch()
