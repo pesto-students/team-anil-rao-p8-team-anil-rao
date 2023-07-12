@@ -11,6 +11,15 @@ import { getUserDataApi } from "../utils/baseApis";
 const LoginScreen = (props) => {
   const [email,setEmail] = useState("test@gmail.com");
   const [password,setPassword] = useState("test@123");
+  function ValidateEmail(mail) 
+  {
+   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+    {
+      return (true)
+    }
+      alert("You have entered an invalid email address!")
+      return (false)
+  }
   useEffect(() => {
     (async () => {
       let temp = localStorage.getItem("userData");
@@ -41,6 +50,7 @@ const LoginScreen = (props) => {
             value={email}
             setValue={setEmail}
             inputStyle={{width:"60%"}}
+            type="email"
           />
 
           <SimpleTextInput 
@@ -48,6 +58,7 @@ const LoginScreen = (props) => {
             value={password}
             setValue={setPassword}
             inputStyle={{width:"60%"}}
+            type="password"
           />
 
           <PurpleButton 
@@ -59,9 +70,22 @@ const LoginScreen = (props) => {
                 alert("PLEASE FILL ALL DETAILS!!");
                 return;
               }
+              let validateEmail = ValidateEmail(email);
+              if(!validateEmail)
+              {
+                return;
+              }
               let userData = await getUserDataApi(email,password);
+              if(userData == null || userData == undefined || userData?.length == 0)
+              {
+                alert("Wrong Details Entered!!");
+                return;
+              }
               userData = userData[0]
               localStorage.setItem("userData",JSON.stringify(userData));
+              if(userData?.isAdmin)
+              window.location.replace("/AdminHomeScreen");
+              else
               window.location.replace("/homeScreen");
             }}
           />

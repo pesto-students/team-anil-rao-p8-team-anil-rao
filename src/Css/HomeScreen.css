@@ -26,6 +26,7 @@
 .main-logo-nav
 {
   margin-bottom: 5vh;
+  align-items: center;
 }
 .nav-icn-cont
 {
@@ -133,6 +134,7 @@
   object-fit: cover;
   width: 100%;
   height: 100%;
+  cursor: pointer;
 }
 .indi-content-card-details-cont
 {

@@ -403,7 +403,7 @@ const HomeScreen = (props) => {
                     setShowContentDetailsModal(true)
                   }}
                 />
-                <FavButton 
+                {/* <FavButton 
                   isFav={userFavouritesData.findIndex((data) => data.contentData._id === trendingData[0]?._id) != -1}
                   onClickFunc={async () => {
                     if(userFavouritesData.findIndex((data) => data.contentData._id === contentModalDetials?._id) != -1)
@@ -411,15 +411,17 @@ const HomeScreen = (props) => {
                       console.log("REMOVE FROM FAVOURITE CALLED!! ")
                       await removeUserFavouritesDataApi(userData?._id,contentModalDetials?._id)
                       await fetchUserFavouritesData(1,10,true);
+                      await fetchTrendingContent(1,1000,true);
                     }
                     else
                     {
                       console.log("ADD TO FAVOURITE CALLED!! ")
                       await addToFavouriteApi(userData?._id,contentModalDetials?._id)
                       await fetchUserFavouritesData(1,10,true);
+                      await fetchTrendingContent(1,1000,true);
                     }
                   }}
-                />
+                /> */}
               </div>
             </div>
 
@@ -434,11 +436,29 @@ const HomeScreen = (props) => {
               allContentData.map((indiContent,index) => {
                 if(indiContent?.active)
                 return(
-                  <div className="indi-content-card" key={index} onClick={() => {
-                    setContentModalDetails(indiContent);
-                    setShowContentDetailsModal(true)
-                  }}>
-                    <img src={indiContent.contentImg} className="indi-content-img"/>
+                  <div className="indi-content-card" key={index} >
+                    <FavButton 
+                      style={{position:"absolute",right:10,top:10,padding:"1.2vh 0.7vw"}}
+                      isFav={userFavouritesData.findIndex((data) => data.contentData._id === indiContent?._id) != -1}
+                      onClickFunc={async () => {
+                        if(userFavouritesData.findIndex((data) => data.contentData._id === indiContent?._id) != -1)
+                        {
+                          console.log("REMOVE FROM FAVOURITE CALLED!! ")
+                          await removeUserFavouritesDataApi(userData?._id,indiContent?._id)
+                          await fetchUserFavouritesData(1,10,true);
+                        }
+                        else
+                        {
+                          console.log("ADD TO FAVOURITE CALLED!! ")
+                          await addToFavouriteApi(userData?._id,indiContent?._id)
+                          await fetchUserFavouritesData(1,10,true);
+                        }
+                      }}
+                    />
+                    <img src={indiContent.contentImg} className="indi-content-img" onClick={() => {
+                      setContentModalDetails(indiContent);
+                      setShowContentDetailsModal(true)
+                    }}/>
                     <div className="indi-content-card-details-cont bck-clr-purple-light">
                       <p className="mrg-0 fnt-sz-3 fnt-wt-700 clr-white indi-content-card-details-cont-title">{indiContent.contentTitle.substring(0,20)}</p>
                       <p className="mrg-0 fnt-sz-3 clr-gry-light indi-content-card-details-cont-details">{indiContent.contentReleaseYear} | {indiContent.contentTags[0]}</p>
@@ -461,11 +481,29 @@ const HomeScreen = (props) => {
                   console.log("indiContent FAVOURITE -> ",indiContent)
                   if(indiContent?.contentData?.active)
                   return(
-                    <div className="indi-content-card" key={index} onClick={() => {
-                      setContentModalDetails(indiContent.contentData);
-                      setShowContentDetailsModal(true)
-                    }}>
-                      <img src={indiContent.contentData.contentImg} className="indi-content-img"/>
+                    <div className="indi-content-card" key={index}>
+                      <FavButton 
+                        style={{position:"absolute",right:10,top:10,padding:"1.2vh 0.7vw"}}
+                        isFav={userFavouritesData.findIndex((data) => data.contentData._id === indiContent?.contentData?._id) != -1}
+                        onClickFunc={async () => {
+                          if(userFavouritesData.findIndex((data) => data.contentData._id === indiContent?.contentData?._id) != -1)
+                          {
+                            console.log("REMOVE FROM FAVOURITE CALLED!! ")
+                            await removeUserFavouritesDataApi(userData?._id,indiContent?.contentData?._id)
+                            await fetchUserFavouritesData(1,10,true);
+                          }
+                          else
+                          {
+                            console.log("ADD TO FAVOURITE CALLED!! ")
+                            await addToFavouriteApi(userData?._id,indiContent?.contentData?._id)
+                            await fetchUserFavouritesData(1,10,true);
+                          }
+                        }}
+                      />
+                      <img src={indiContent.contentData.contentImg} className="indi-content-img" onClick={() => {
+                        setContentModalDetails(indiContent.contentData);
+                        setShowContentDetailsModal(true)
+                      }}/>
                       <div className="indi-content-card-details-cont bck-clr-purple-light">
                         <p className="mrg-0 fnt-sz-3 fnt-wt-700 clr-white indi-content-card-details-cont-title">{indiContent.contentData.contentTitle.substring(0,20)}</p>
                         <p className="mrg-0 fnt-sz-3 clr-gry-light indi-content-card-details-cont-details">{indiContent.contentData.contentReleaseYear} | {indiContent.contentData.contentTags[0]}</p>
@@ -486,11 +524,29 @@ const HomeScreen = (props) => {
               trendingData.map((indiContent,index) => {
                 if(indiContent?.active)
                 return(
-                  <div className="indi-content-card" key={index} onClick={() => {
-                    setContentModalDetails(indiContent);
-                    setShowContentDetailsModal(true)
-                  }}>
-                    <img src={indiContent.contentImg} className="indi-content-img"/>
+                  <div className="indi-content-card" key={index} >
+                    <FavButton 
+                      style={{position:"absolute",right:10,top:10,padding:"1.2vh 0.7vw"}}
+                      isFav={userFavouritesData.findIndex((data) => data.contentData._id === indiContent?._id) != -1}
+                      onClickFunc={async () => {
+                        if(userFavouritesData.findIndex((data) => data.contentData._id === indiContent?._id) != -1)
+                        {
+                          console.log("REMOVE FROM FAVOURITE CALLED!! ")
+                          await removeUserFavouritesDataApi(userData?._id,indiContent?._id)
+                          await fetchUserFavouritesData(1,10,true);
+                        }
+                        else
+                        {
+                          console.log("ADD TO FAVOURITE CALLED!! ")
+                          await addToFavouriteApi(userData?._id,indiContent?._id)
+                          await fetchUserFavouritesData(1,10,true);
+                        }
+                      }}
+                    />
+                    <img src={indiContent.contentImg} className="indi-content-img" onClick={() => {
+                      setContentModalDetails(indiContent);
+                      setShowContentDetailsModal(true)
+                    }}/>
                     <div className="indi-content-card-details-cont bck-clr-purple-light">
                       <p className="mrg-0 fnt-sz-3 fnt-wt-700 clr-white indi-content-card-details-cont-title">{indiContent.contentTitle.substring(0,20)}</p>
                       <p className="mrg-0 fnt-sz-3 clr-gry-light indi-content-card-details-cont-details">{indiContent.contentReleaseYear} | {indiContent.contentTags[0]}</p>

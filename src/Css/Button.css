@@ -6,6 +6,7 @@
   align-items:center;
   display:flex;
   font-weight:bold;
+  cursor: pointer;
 }
 .purple-button
 {
@@ -15,6 +16,7 @@
   display:flex;
   font-weight:bold;
   padding:1.5vh 2vw;
+  cursor: pointer;
 }
 .fav-butt
 {
@@ -24,6 +26,7 @@
   display:flex;
   font-weight:bold;
   padding:1.5vh 1vw;
+  cursor: pointer;
 }
 
 @media screen and (max-width: 900px) {

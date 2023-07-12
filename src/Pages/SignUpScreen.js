@@ -29,6 +29,15 @@ const SignUpScreen = (props) => {
       }
     })()
   },[])
+  function ValidateEmail(mail) 
+  {
+   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+    {
+      return (true)
+    }
+      alert("You have entered an invalid email address!")
+      return (false)
+  }
   return(
     <div className="signup-screen">
       <div className="signup-screen-cont wid-95-cnt">
@@ -72,6 +81,12 @@ const SignUpScreen = (props) => {
                 if(email == "" || password == "" || userName == "")
                 {
                   alert("PLease Fill All Details !!")
+                  return;
+                }
+                let validateEmail = ValidateEmail(email);
+                if(!validateEmail)
+                {
+                  return;
                 }
                 let data = await createNewUserApi(userName,email,password,selectedPlan);
                 console.log("USER DATA SAVED IN BACKEND",data)
