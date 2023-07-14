@@ -1,0 +1,43 @@
+
+.normal-button
+{
+  border-radius:10px;
+  justify-content:center;
+  align-items:center;
+  display:flex;
+  font-weight:bold;
+  cursor: pointer;
+}
+.purple-button
+{
+  border-radius:10px;
+  justify-content:center;
+  align-items:center;
+  display:flex;
+  font-weight:bold;
+  padding:1.5vh 2vw;
+  cursor: pointer;
+}
+.fav-butt
+{
+  border-radius:10px;
+  justify-content:center;
+  align-items:center;
+  display:flex;
+  font-weight:bold;
+  padding:1.5vh 1vw;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 900px) {
+  .fav-butt
+  {
+    padding:1.5vh 4vw;
+  }
+
+  .fav-butt > img
+  {
+    width: 4vw !important;
+    height: 4vw !important;
+  }
+}
