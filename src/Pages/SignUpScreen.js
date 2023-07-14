@@ -100,6 +100,11 @@ const SignUpScreen = (props) => {
                 {
                   return;
                 }
+                if(password.length < 7)
+                {
+                  alert("Password length should be greater than 7 Characters!!")
+                  return;
+                }
                 if(await checkIfUserExists(email))
                 {
                   alert("User Already Exist With Same Email!!")
