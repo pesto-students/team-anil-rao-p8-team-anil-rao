@@ -321,6 +321,30 @@ export const updateContentViewApi = (contentId,contentView=null) => {
     });
   })
 }
+export const checkEmailExistsApi = (email="") => {
+  return new Promise ((resolve,reject) => {var formdata = new FormData();
+    formdata.append("email", email);
+    formdata.append("page", "1");
+    formdata.append("limit", "10");
+    
+    var requestOptions = {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow'
+    };
+    
+    fetch(`${url}v1/users/readAll?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUGhvbmVOdW1iZXIiOiI4NjE5ODgzNjYzIiwiaWF0IjoxNjQ3MjYwMDY0fQ.fOYX04YwCJCbH1Zs3V5OMV6BaXAzyYhK7uVDANUf_Ds`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      // console.log(result)
+      resolve(result.data)
+    })
+    .catch(error => {
+      // console.log('error', error)
+      reject("error");
+    });
+  })
+}
 export const baseTemplate = () => {
   return new Promise ((resolve,reject) => {
     fetch()

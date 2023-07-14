@@ -7,7 +7,7 @@ import "../Css/SignUpScreen.css";
 import MainLogo from "../assets/MainLogo.png";
 import { SimpleTextInput } from "../Components/TextInput";
 import { PurpleButton } from "../Components/Button";
-import { createNewUserApi } from "../utils/baseApis";
+import { checkEmailExistsApi, createNewUserApi } from "../utils/baseApis";
 
 const SignUpScreen = (props) => {
   const [userName,setUserName] = useState("");
@@ -37,6 +37,18 @@ const SignUpScreen = (props) => {
     }
       alert("You have entered an invalid email address!")
       return (false)
+  }
+  async function checkIfUserExists(email)
+  {
+    let data = await checkEmailExistsApi(email);
+    if(data!=null && data!=undefined && data.length > 0)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
   return(
     <div className="signup-screen">
@@ -86,6 +98,11 @@ const SignUpScreen = (props) => {
                 let validateEmail = ValidateEmail(email);
                 if(!validateEmail)
                 {
+                  return;
+                }
+                if(await checkIfUserExists(email))
+                {
+                  alert("User Already Exist With Same Email!!")
                   return;
                 }
                 let data = await createNewUserApi(userName,email,password,selectedPlan);
